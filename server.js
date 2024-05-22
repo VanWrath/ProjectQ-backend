@@ -176,7 +176,7 @@ app.post('/user/:id/answer', async (req, res) => {
 *
 *   Request body required fields
 *   question, answer
-*/
+
 app.put('/user/:id',  (req, res) => {
     console.log('updating user...')
     console.log(req.params.id);
@@ -189,9 +189,8 @@ app.put('/user/:id',  (req, res) => {
     }
 
     User.updateOne({_id: id}, {$push: newAnswer})
-    
 })
-
+*/
 
 function checkAuthenticated(req,res,next){
     if (req.isAuthenticated()){
