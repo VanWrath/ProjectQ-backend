@@ -3,7 +3,6 @@ if (process.env.NODE_ENV !== 'production'){
 }
 
 const express = require('express');
-const app = express();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const bodyParser = require('body-parser')
@@ -13,6 +12,8 @@ const session = require('express-session');
 const methodOverride = require('method-override')
 const initializePassport = require('./passport-config');
 const cookieParser = require("cookie-parser")
+
+const app = express();
 
 //const users = [];
 
@@ -57,6 +58,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(cookieParser())
 app.use(express.json())
+
 
 //main page route
 app.get('/', checkAuthenticated, async (req, res) => {
@@ -103,12 +105,6 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         user.password = hashedPassword;
         
         user.save();
-        /*users.push({
-            id: Date.now().toString(),
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPassword
-        });*/
         res.redirect('/login'); //redirect to login after successfully registering
     } catch {
         res.redirect('/register');
@@ -130,14 +126,15 @@ app.delete('/logout', (req,res,next) => {
 *   Required params: 
 *   email
 */
-app.get('/user/email=:email', findUserByEmail);
+app.get('/user/email=:email', checkAuthenticated, findUserByEmail);
+
+
 
 /*  Get user by id
 *   Required params: 
 *   id
 */
-app.get('/user/id=:id', findUserById);
-
+app.get('/user/id=:id', checkAuthenticated, findUserById);
 
 /*  Get answers for specific user
 *   required params:
@@ -146,7 +143,6 @@ app.get('/user/id=:id', findUserById);
 app.get('/user/:id/answers', checkAuthenticated, (req, res) => {
 
 })
-
 
 /*  PUT answers for specified user
 *   Required params:
@@ -157,7 +153,7 @@ app.get('/user/:id/answers', checkAuthenticated, (req, res) => {
 *
 *   returns updated user data.
 */
-app.post('/user/:id/answer', async (req, res) => {
+app.post('/user/:id/answer', checkAuthenticated, async (req, res) => {
     const { id } = req.params;
     var newAnswer = {
         date: Date.now(),
@@ -176,8 +172,8 @@ app.post('/user/:id/answer', async (req, res) => {
 *
 *   Request body required fields
 *   question, answer
-
-app.put('/user/:id',  (req, res) => {
+*/
+app.put('/user/:id', checkAuthenticated, (req, res) => {
     console.log('updating user...')
     console.log(req.params.id);
     console.log(JSON.stringify(req.body));
@@ -190,7 +186,7 @@ app.put('/user/:id',  (req, res) => {
 
     User.updateOne({_id: id}, {$push: newAnswer})
 })
-*/
+
 
 function checkAuthenticated(req,res,next){
     if (req.isAuthenticated()){
@@ -227,5 +223,4 @@ async function findUserByEmail(req, res, next) {
     }
 }
 
-app.listen(3000);
-console.log('listening on port 3000')
+app.listen(3000, () => console.log('listening on port 3000'));
