@@ -1,0 +1,18 @@
+<h1>Hi <%=firstName %></h1>
+<form action="/logout?_method=DELETE" method="POST">
+    <button type="submit">Log Out</button>
+</form>
+
+<form action="/user/664adfdbd81a397bd03e1e9e/answer" method="POST">
+    <div>
+        <label for="question">Question</label>
+        <input type="text" id="question" name="question" required/>
+    </div>
+    <div>
+        <label for="answer">Write about how you could make your room more aesthetically pleasing.</label>
+        <textarea id="answer" name="answer" required></textarea>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+<a href="/journals">Journals</a>
